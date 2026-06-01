@@ -392,29 +392,50 @@ function BookingModal({ isOpen, onClose }) {
     setStep(prev => prev - 1);
   };
 
-  const handleIframeLoad = () => {
-    if (submitting) {
-      setSubmitting(false);
-      setStep(4);
-    }
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateStep(3)) return;
 
     setSubmitting(true);
     setSubmitError("");
 
-    setTimeout(() => {
-      const form = document.getElementById("formsubmit-form");
-      if (form) {
-        form.submit();
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          access_key: "0dff9f79-66f2-4254-ae98-30852f77b7d6",
+          subject: `New Booking Inquiry from ${formData.name}`,
+          from_name: "Memories by Milind Portal",
+          "Name": formData.name,
+          "Email": formData.email,
+          "Phone": formData.phone,
+          "Session Category": formData.category,
+          "Preferred Date": formData.date,
+          "Location Preference": formData.location,
+          "Shoot Vision": formData.vision || "N/A",
+          "Emergency Contact Name": formData.iceName,
+          "Emergency Contact Relationship": formData.iceRelationship,
+          "Emergency Contact Phone": formData.icePhone,
+          "Special Instructions / Medical Notes": formData.iceNotes || "N/A"
+        })
+      });
+
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setStep(4);
       } else {
-        setSubmitError("Form connection error. Please copy to clipboard instead.");
-        setSubmitting(false);
+        throw new Error(data.message || "Failed to send inquiry. Please try again.");
       }
-    }, 50);
+    } catch (err) {
+      console.error("Web3Forms submission error:", err);
+      setSubmitError(err.message || "Something went wrong. Please copy details to clipboard instead.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleCopyToClipboard = () => {
@@ -666,7 +687,7 @@ function BookingModal({ isOpen, onClose }) {
                 </p>
                 <div className="success-actions">
                   <button className="button primary" onClick={handleCopyToClipboard}>
-                    Copy to Clipboard (Fallback)
+                    Copy Details
                   </button>
                   <button className="button ghost" onClick={() => { resetForm(); onClose(); }}>
                     Close Window
@@ -675,33 +696,6 @@ function BookingModal({ isOpen, onClose }) {
               </div>
             )}
           </div>
-
-          <form 
-            id="formsubmit-form"
-            action="https://formsubmit.co/milindkurma@gmail.com" 
-            method="POST" 
-            target="formsubmit-iframe"
-            style={{ display: "none" }}
-          >
-            <input type="hidden" name="_captcha" value="false" />
-            <input type="hidden" name="Name" value={formData.name} />
-            <input type="hidden" name="Email" value={formData.email} />
-            <input type="hidden" name="Phone" value={formData.phone} />
-            <input type="hidden" name="Session Category" value={formData.category} />
-            <input type="hidden" name="Preferred Date" value={formData.date} />
-            <input type="hidden" name="Location Preference" value={formData.location} />
-            <input type="hidden" name="Shoot Vision" value={formData.vision || "N/A"} />
-            <input type="hidden" name="Emergency Contact Name" value={formData.iceName} />
-            <input type="hidden" name="Emergency Contact Relationship" value={formData.iceRelationship} />
-            <input type="hidden" name="Emergency Contact Phone" value={formData.icePhone} />
-            <input type="hidden" name="Special Instructions / Medical Notes" value={formData.iceNotes || "N/A"} />
-          </form>
-          <iframe 
-            name="formsubmit-iframe" 
-            id="formsubmit-iframe" 
-            style={{ display: "none" }}
-            onLoad={handleIframeLoad}
-          />
         </motion.div>
       </motion.div>
     </AnimatePresence>
