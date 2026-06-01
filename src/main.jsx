@@ -138,8 +138,7 @@ function Portfolio() {
         <span className="eyebrow">Portfolio</span>
         <h2>Stories worth keeping.</h2>
         <p>
-          A curated premium gallery flow. Replace these placeholders with your real
-          Shreeya, Saketh, Clover, sunset, and mountain photos using the same file names.
+          A curated collection of natural portraits, pet photography, scenic landscapes, and lifestyle moments.
         </p>
       </motion.div>
 
@@ -216,13 +215,10 @@ function Story() {
         <span className="eyebrow">The Story</span>
         <h2>Hi, I’m Milind.</h2>
         <p>
-          I created Memories by Milind for the kind of photographs people come back to:
-          a quiet smile, a favorite person, a pet’s personality, a mountain view, or a
-          celebration that deserves to feel timeless.
+          I believe that memories are our most valuable possessions. Over time, details fade—the way a pet tilted their head, the exact warmth of a sunset on a mountain trail, or a spontaneous laugh shared with a loved one. That is why I started Memories by Milind: to capture and collect those fleeting moments before they slip away.
         </p>
         <p>
-          The experience is relaxed, personal, and story-driven. My goal is to make people
-          feel comfortable first — because the best photographs happen when the moment feels real.
+          Photography is more than just taking pictures; it is about preserving a feeling. My sessions are relaxed, natural, and story-driven, designed to make you feel completely comfortable. The best photos aren't staged; they are the ones where your real story shines through.
         </p>
         <a href="#contact" className="text-link">Start your session story →</a>
       </motion.div>
@@ -256,7 +252,7 @@ function Services() {
       <div className="section-heading">
         <span className="eyebrow">Services</span>
         <h2>Premium feel. Simple packages.</h2>
-        <p>Start with approachable pricing, then increase once you have reviews, repeat clients, and stronger event samples.</p>
+        <p>Transparent pricing designed to make professional storytelling accessible. Each package is tailored to preserve your genuine moments.</p>
       </div>
 
       <motion.div className="service-grid" initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger}>
