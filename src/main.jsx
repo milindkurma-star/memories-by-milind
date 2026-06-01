@@ -392,45 +392,29 @@ function BookingModal({ isOpen, onClose }) {
     setStep(prev => prev - 1);
   };
 
-  const handleSubmit = async (e) => {
+  const handleIframeLoad = () => {
+    if (submitting) {
+      setSubmitting(false);
+      setStep(4);
+    }
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (!validateStep(3)) return;
 
     setSubmitting(true);
     setSubmitError("");
 
-    try {
-      const response = await fetch("https://formsubmit.co/ajax/milindkurma@gmail.com", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json"
-        },
-        body: JSON.stringify({
-          "Name": formData.name,
-          "Email": formData.email,
-          "Phone": formData.phone,
-          "Session Category": formData.category,
-          "Preferred Date": formData.date,
-          "Location Preference": formData.location,
-          "Shoot Vision": formData.vision || "N/A",
-          "Emergency Contact Name": formData.iceName,
-          "Emergency Contact Relationship": formData.iceRelationship,
-          "Emergency Contact Phone": formData.icePhone,
-          "Special Instructions / Medical Notes": formData.iceNotes || "N/A"
-        })
-      });
-
-      if (response.ok) {
-        setStep(4);
+    setTimeout(() => {
+      const form = document.getElementById("formsubmit-form");
+      if (form) {
+        form.submit();
       } else {
-        throw new Error("Failed to send inquiry. Please try again or copy to clipboard.");
+        setSubmitError("Form connection error. Please copy to clipboard instead.");
+        setSubmitting(false);
       }
-    } catch (err) {
-      setSubmitError(err.message || "Something went wrong. Please copy to clipboard instead.");
-    } finally {
-      setSubmitting(false);
-    }
+    }, 50);
   };
 
   const handleCopyToClipboard = () => {
@@ -691,6 +675,33 @@ function BookingModal({ isOpen, onClose }) {
               </div>
             )}
           </div>
+
+          <form 
+            id="formsubmit-form"
+            action="https://formsubmit.co/milindkurma@gmail.com" 
+            method="POST" 
+            target="formsubmit-iframe"
+            style={{ display: "none" }}
+          >
+            <input type="hidden" name="_captcha" value="false" />
+            <input type="hidden" name="Name" value={formData.name} />
+            <input type="hidden" name="Email" value={formData.email} />
+            <input type="hidden" name="Phone" value={formData.phone} />
+            <input type="hidden" name="Session Category" value={formData.category} />
+            <input type="hidden" name="Preferred Date" value={formData.date} />
+            <input type="hidden" name="Location Preference" value={formData.location} />
+            <input type="hidden" name="Shoot Vision" value={formData.vision || "N/A"} />
+            <input type="hidden" name="Emergency Contact Name" value={formData.iceName} />
+            <input type="hidden" name="Emergency Contact Relationship" value={formData.iceRelationship} />
+            <input type="hidden" name="Emergency Contact Phone" value={formData.icePhone} />
+            <input type="hidden" name="Special Instructions / Medical Notes" value={formData.iceNotes || "N/A"} />
+          </form>
+          <iframe 
+            name="formsubmit-iframe" 
+            id="formsubmit-iframe" 
+            style={{ display: "none" }}
+            onLoad={handleIframeLoad}
+          />
         </motion.div>
       </motion.div>
     </AnimatePresence>
