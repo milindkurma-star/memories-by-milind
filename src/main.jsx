@@ -347,6 +347,8 @@ function BookingModal({ isOpen, onClose }) {
     iceNotes: ""
   });
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   if (!isOpen) return null;
 
@@ -390,40 +392,45 @@ function BookingModal({ isOpen, onClose }) {
     setStep(prev => prev - 1);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateStep(3)) return;
 
-    const emailBody = `Hi Milind,
+    setSubmitting(true);
+    setSubmitError("");
 
-I would like to book a photography session! Here are my inquiry details:
+    try {
+      const response = await fetch("https://formsubmit.co/ajax/milindkurma@gmail.com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          "Name": formData.name,
+          "Email": formData.email,
+          "Phone": formData.phone,
+          "Session Category": formData.category,
+          "Preferred Date": formData.date,
+          "Location Preference": formData.location,
+          "Shoot Vision": formData.vision || "N/A",
+          "Emergency Contact Name": formData.iceName,
+          "Emergency Contact Relationship": formData.iceRelationship,
+          "Emergency Contact Phone": formData.icePhone,
+          "Special Instructions / Medical Notes": formData.iceNotes || "N/A"
+        })
+      });
 
---- CLIENT DETAILS ---
-Name: ${formData.name}
-Email: ${formData.email}
-Phone: ${formData.phone}
-
---- SHOOT DETAILS ---
-Category: ${formData.category}
-Preferred Date: ${formData.date}
-Location: ${formData.location}
-Vision & Description:
-${formData.vision || "N/A"}
-
---- IN CASE OF EMERGENCY (ICE) ---
-Emergency Contact Name: ${formData.iceName}
-Relationship: ${formData.iceRelationship}
-Emergency Contact Phone: ${formData.icePhone}
-Special Instructions / Medical Notes:
-${formData.iceNotes || "N/A"}
-
-Thank you!`;
-
-    const subject = `Memories by Milind - Booking Inquiry (${formData.name})`;
-    const mailtoUrl = `mailto:milindkurma@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
-    
-    window.location.href = mailtoUrl;
-    setStep(4);
+      if (response.ok) {
+        setStep(4);
+      } else {
+        throw new Error("Failed to send inquiry. Please try again or copy to clipboard.");
+      }
+    } catch (err) {
+      setSubmitError(err.message || "Something went wrong. Please copy to clipboard instead.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleCopyToClipboard = () => {
@@ -447,6 +454,8 @@ Thank you!`;
       iceNotes: ""
     });
     setErrors({});
+    setSubmitting(false);
+    setSubmitError("");
     setStep(1);
   };
 
@@ -647,9 +656,16 @@ Thank you!`;
                     rows={2}
                   />
                 </div>
+                {submitError && (
+                  <p className="error-text" style={{ marginTop: "12px", textAlign: "center", fontSize: "13px" }}>
+                    {submitError}
+                  </p>
+                )}
                 <div className="form-navigation">
-                  <button type="button" className="button ghost" onClick={handleBack}>Back</button>
-                  <button type="submit" className="button primary">Submit Inquiry via Email</button>
+                  <button type="button" className="button ghost" onClick={handleBack} disabled={submitting}>Back</button>
+                  <button type="submit" className="button primary" disabled={submitting}>
+                    {submitting ? "Sending..." : "Submit Inquiry"}
+                  </button>
                 </div>
               </form>
             )}
@@ -659,14 +675,14 @@ Thank you!`;
                 <div className="success-icon-wrap">
                   <Sparkles size={40} />
                 </div>
-                <h4>Inquiry Prepared!</h4>
+                <h4>Inquiry Sent!</h4>
                 <p>
-                  Your mail application has been triggered to send the details to <strong>milindkurma@gmail.com</strong>. 
-                  Please review and hit send in your email application.
+                  Your details have been sent directly to <strong>milindkurma@gmail.com</strong>. 
+                  We will get back to you shortly to confirm your booking!
                 </p>
                 <div className="success-actions">
                   <button className="button primary" onClick={handleCopyToClipboard}>
-                    Copy Details to Clipboard
+                    Copy to Clipboard (Fallback)
                   </button>
                   <button className="button ghost" onClick={() => { resetForm(); onClose(); }}>
                     Close Window
