@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1500" viewBox="0 0 1200 1500">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#15110C" offset="0"/>
+      <stop stop-color="#0D0D0D" offset="1"/>
+    </linearGradient>
+    <radialGradient id="r" cx="60%" cy="28%" r="55%">
+      <stop stop-color="#CBA063" stop-opacity=".38" offset="0"/>
+      <stop stop-color="#000000" stop-opacity="0" offset="1"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="1500" fill="url(#g)"/>
+  <rect width="1200" height="1500" fill="url(#r)"/>
+  <circle cx="960" cy="210" r="100" fill="#F5E9D6" opacity=".22"/>
+  <path d="M0 1110 C250 950 420 1080 620 930 C790 810 970 870 1200 700 L1200 1500 L0 1500Z" fill="#0D0D0D" opacity=".55"/>
+  <path d="M0 1220 C300 1030 490 1180 720 1010 C890 890 1010 940 1200 820 L1200 1500 L0 1500Z" fill="#050505" opacity=".72"/>
+  <text x="80" y="1190" fill="#F5E9D6" font-size="70" font-family="Georgia, serif">Behind The Lens</text>
+  <text x="84" y="1260" fill="#CBA063" font-size="28" letter-spacing="7" font-family="Arial, sans-serif">SONY A6400</text>
+</svg>
