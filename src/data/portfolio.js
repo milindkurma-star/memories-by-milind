@@ -69,6 +69,29 @@ const items = Object.entries(allModules).map(([path, module]) => {
 // Interleave portrait (tall) and landscape/square (wide) shapes to distribute evenly across columns
 function interleaveShapes(portfolioList) {
   const portraits = portfolioList.filter(item => item.category === "Portraits");
+  
+  // Sort portraits: Shreeya first (Priority 1), Saketh second (Priority 2), Nishitha third (Priority 3)
+  portraits.sort((a, b) => {
+    const aTitle = a.title.toLowerCase();
+    const bTitle = b.title.toLowerCase();
+    
+    const getPriority = (title) => {
+      if (title.includes("shreeya")) return 1;
+      if (title.includes("saketh")) return 2;
+      if (title.includes("nish")) return 3;
+      return 4;
+    };
+    
+    const aPriority = getPriority(aTitle);
+    const bPriority = getPriority(bTitle);
+    
+    if (aPriority !== bPriority) {
+      return aPriority - bPriority;
+    }
+    
+    return aTitle.localeCompare(bTitle);
+  });
+
   const landscapes = portfolioList.filter(item => item.category !== "Portraits");
 
   const interleaved = [];
