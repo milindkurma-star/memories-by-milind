@@ -110,11 +110,28 @@ function interleaveShapes(portfolioList) {
   return interleaved;
 }
 
-export const portfolioItems = interleaveShapes(items);
+const groupedItemsMap = new Map();
+
+items.forEach(item => {
+  const key = `${item.category}::${item.title}`;
+  if (!groupedItemsMap.has(key)) {
+    groupedItemsMap.set(key, {
+      ...item,
+      images: [item.src]
+    });
+  } else {
+    groupedItemsMap.get(key).images.push(item.src);
+  }
+});
+
+const groupedItems = Array.from(groupedItemsMap.values());
+
+export const portfolioItems = interleaveShapes(groupedItems);
 
 // Dynamically compute active categories based on uploaded files
-const activeCategoriesSet = new Set(items.map(item => item.category));
+const activeCategoriesSet = new Set(groupedItems.map(item => item.category));
 const order = ["Portraits", "Pets", "Landscapes", "Lifestyle", "Events", "BTS"];
 const presentCategories = order.filter(cat => activeCategoriesSet.has(cat));
 
 export const categories = ["All", ...presentCategories];
+

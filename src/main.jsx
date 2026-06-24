@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { motion, AnimatePresence } from "framer-motion";
-import { Camera, Heart, Mountain, PawPrint, Sparkles, Mail, ArrowUpRight, Menu, X, MapPin, Clock, Aperture } from "lucide-react";
+import { Camera, Heart, Mountain, PawPrint, Sparkles, Mail, ArrowUpRight, Menu, X, MapPin, Clock, Aperture, ChevronLeft, ChevronRight } from "lucide-react";
 import { categories, portfolioItems } from "./data/portfolio";
 import "./styles.css";
 
@@ -126,6 +126,7 @@ function BrandStrip() {
 function Portfolio() {
   const [active, setActive] = useState("All");
   const [selected, setSelected] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const filtered = useMemo(() => {
     if (active === "All") return portfolioItems;
@@ -165,7 +166,7 @@ function Portfolio() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.96, y: 16 }}
               transition={{ duration: 0.42 }}
-              onClick={() => setSelected(item)}
+              onClick={() => { setSelected(item); setCurrentImageIndex(0); }}
             >
               <img src={item.src} alt={item.title} />
               <span className="gallery-tag">{item.category}</span>
@@ -191,7 +192,50 @@ function Portfolio() {
               onClick={(event) => event.stopPropagation()}
             >
               <button className="close" onClick={() => setSelected(null)}><X size={22} /></button>
-              <img src={selected.src} alt={selected.title} />
+              
+              <div className="lightbox-image-container">
+                {selected.images && selected.images.length > 1 ? (
+                  <>
+                    <img src={selected.images[currentImageIndex]} alt={`${selected.title} - Photo ${currentImageIndex + 1}`} />
+                    <button 
+                      className="carousel-btn prev" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCurrentImageIndex(prev => (prev === 0 ? selected.images.length - 1 : prev - 1));
+                      }}
+                      aria-label="Previous image"
+                    >
+                      <ChevronLeft size={22} />
+                    </button>
+                    <button 
+                      className="carousel-btn next" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCurrentImageIndex(prev => (prev === selected.images.length - 1 ? 0 : prev + 1));
+                      }}
+                      aria-label="Next image"
+                    >
+                      <ChevronRight size={22} />
+                    </button>
+                    <div className="carousel-dots">
+                      {selected.images.map((_, idx) => (
+                        <button 
+                          key={idx} 
+                          className={`carousel-dot ${currentImageIndex === idx ? "active" : ""}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setCurrentImageIndex(idx);
+                          }}
+                          aria-label={`Go to slide ${idx + 1}`}
+                        />
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <img src={selected.src} alt={selected.title} />
+                )}
+              </div>
+
               <div>
                 <span className="eyebrow">{selected.category}</span>
                 <h3>{selected.title}</h3>
